@@ -1,0 +1,5 @@
+{
+    "geminicodeassist.inlineSuggestions.enableAuto": false,
+    "editor.suggest.showInlineDetails": true,
+    "editor.inlineSuggest.suppressSuggestions": true
+}
