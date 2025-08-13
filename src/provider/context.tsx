@@ -6,6 +6,7 @@ import {
   RpcSubscriptions,
   SolanaRpcApiMainnet,
   SolanaRpcSubscriptionsApi,
+  Address,
 } from "@solana/kit";
 import {
   ConnectionProvider,
@@ -47,7 +48,7 @@ export const SolanaContextProvider: React.FC<IProps> =  ({ children }) => {
   const rpcSubscriptions = createSolanaRpcSubscriptions(endpoint.replace("https", "wss"));
   const { wallets: adapters, select, publicKey, connect} = useWallet()
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null)
-  const [publicKey, setPublicKey] = useState<string | null>(null)
+ // const [publicKey, setPublicKey] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   
   const wallets = useMemo( () => 
@@ -80,7 +81,7 @@ export const SolanaContextProvider: React.FC<IProps> =  ({ children }) => {
     }
     
     await connect(walletToBeConnected)
-    setPublicKey(publicKey.toBase58())
+    //setPublicKey(publicKey.toBase58())
     
   }
 
@@ -103,7 +104,7 @@ export const SolanaContextProvider: React.FC<IProps> =  ({ children }) => {
         rpcSubscriptions, 
         connectWallet, 
         selectWallet, 
-        publicKey, 
+        publicKey: publicKey ? publicKey.toBase58 : null, 
         message, 
         selectedWallet, 
         getBalance 
