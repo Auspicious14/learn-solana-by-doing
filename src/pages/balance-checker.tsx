@@ -62,7 +62,7 @@ export default function BalanceChecker() {
       )}
 
       {message && (
-        <div className="mt-6 py-3 px-4 bg-gray-800 text-gray-300 text-center rounded-lg">
+        <div className="mt-6 py-3 px-4 bg-gray-800 text-gray-300 text-center rounded-lg text-wrap flex flex-wrap">
           {message}
         </div>
       )}
