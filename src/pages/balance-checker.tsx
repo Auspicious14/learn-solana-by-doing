@@ -24,26 +24,23 @@ export default function BalanceChecker() {
   };
 
   return (
-    <div className="max-w-md flex justify-center flex-col mx-auto p-6 sm:p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg">
+    <div className="min-h-screen flex justify-center items-center flex-col mx-auto p-6 sm:p-12 md:p-24 bg-gradient-to-b from-gray-900 to-gray-800 text-white border border-gray-700 rounded-lg shadow-lg">
       <h1 className="text-center text-3xl font-bold text-white mb-6">
         Wallet Balance Checker
       </h1>
 
-      {/* Connect Wallet button using WalletMultiButton */}
       <div className="flex justify-center mb-6">
         <WalletMultiButton
           className="!bg-blue-600 !text-white !rounded-lg !px-6 !py-3 !font-semibold hover:!bg-blue-700 transition-colors duration-200"
         />
       </div>
 
-      {/* Show connected public key */}
       {publicKey && (
         <p className="text-center text-sm text-gray-300 mb-6 break-all">
           Connected: <span className="font-mono text-blue-400">{publicKey}</span>
         </p>
       )}
 
-      {/* Get Balance Button (hidden until wallet is connected) */}
       {publicKey && (
         <div className="flex justify-center">
           <button
@@ -56,7 +53,6 @@ export default function BalanceChecker() {
         </div>
       )}
 
-      {/* Show balance */}
       {balance !== null && (
         <div className="mt-6 text-center">
           <p className="text-lg font-semibold text-white">
@@ -65,7 +61,6 @@ export default function BalanceChecker() {
         </div>
       )}
 
-      {/* Message from context */}
       {message && (
         <div className="mt-6 py-3 px-4 bg-gray-800 text-gray-300 text-center rounded-lg">
           {message}
