@@ -24,7 +24,7 @@ export default function BalanceChecker() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 sm:p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg">
+    <div className="max-w-md flex justify-center flex-col mx-auto p-6 sm:p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg">
       <h1 className="text-center text-3xl font-bold text-white mb-6">
         Wallet Balance Checker
       </h1>
