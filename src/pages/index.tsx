@@ -1,62 +1,23 @@
 import { Inter } from "next/font/google";
 import { useState } from "react";
-import {
-  createSolanaRpc,
-  createSolanaRpcSubscriptions,
-  generateKeyPairSigner,
-  Address,
-} from "@solana/kit";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const rpc = createSolanaRpc("https://api.mainnnet-beta.solana.com");
-  const rpcSubscriptions = createSolanaRpcSubscriptions(
-    "wss://api.mainnet-beta.solana.com"
-  );
-  const [walletBalance, setWalletBalance] = useState<number>();
-  const [message, setMessage] = useState<string>("");
-
-  const generateWallet = async () => {
-    return await generateKeyPairSigner();
-  };
-
-  const handleWalletBalance = async (address: string) => {
-    const wallet = await generateWallet();
-    if (!wallet) {
-      console.log("No wallet address");
-      setMessage("No wallet address");
-      return;
-    }
-
-    const balance = await rpc.getBalance(address as Address).send();
-    if (!balance.value) {
-      setMessage("No Balance found for this wallet");
-      return;
-    }
-
-    setWalletBalance(Number(balance.value) / 1_000_000_000);
-    setMessage(`You have ${walletBalance} balance left.`);
-  };
+  
 
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
       <div>
-        <h1 className="text-center font-bold text-xl">
-          Wallet Balance Checker
-        </h1>
+        <h1>Hey, My name is Abdulganiyu, friends call me Auspicious.</h1>
+        <p>Below are the list of projects I have built whilst learning Solana/p>
+
+          <div>
+          <Link href="/balance-checker">Wallet Balance Checker </Link>
+          </div>
       </div>
-      <input
-        type="text"
-        placeholder="Add a wallet address"
-        className="p-2 rounded-sm outline-none border border-gray-200 focus:ring-blue-500"
-        onChange={(e) => handleWalletBalance(e.target.value)}
-      />
-      {message && (
-        <div className="py-4 flex justify-center items-center">{message}</div>
-      )}
     </main>
   );
 }
