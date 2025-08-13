@@ -36,7 +36,7 @@ export default function Home() {
       return;
     }
     
-    setWalletBalance(balance.value / 1_000_000_000)
+    setWalletBalance(Number(balance.value) / 1_000_000_000)
     setMessage(`You have ${walletBalance} balance left.`)
   };
 
@@ -44,6 +44,9 @@ export default function Home() {
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
+      <div>
+        <h1 className="text-center font-bold text-xl">Wallet Balance Checker</h1>
+      </div>
       <input 
         type="text" 
         placeholder="Add a wallet address" 
