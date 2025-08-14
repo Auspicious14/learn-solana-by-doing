@@ -3,24 +3,20 @@ import { useSolanaState } from "@/provider/context";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function BalanceChecker() {
-  const { message, getBalance, publicKey } = useSolanaState();
+  const { message, getBalance, publicKey, connectWallet } = useSolanaState();
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleGetBalance = async () => {
-    if (!publicKey) {
-      alert("Please connect a wallet first.");
-      return;
-    }
-
     setLoading(true);
     try {
       const balanceInSol = await getBalance();
       setBalance(balanceInSol);
     } catch (err) {
       console.error("Error getting balance:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -31,13 +27,17 @@ export default function BalanceChecker() {
 
       <div className="flex justify-center mb-6">
         <WalletMultiButton
+          onClick={connectWallet}
           className="!bg-blue-600 !text-white !rounded-lg !px-6 !py-3 !font-semibold hover:!bg-blue-700 transition-colors duration-200"
         />
       </div>
 
       {publicKey && (
         <p className="text-center text-sm text-gray-300 mb-6 break-all">
-          Connected: <span className="font-mono text-blue-400">{publicKey}</span>
+          Connected:{" "}
+          <span className="font-mono text-blue-400">
+            {publicKey?.toBase58()}
+          </span>
         </p>
       )}
 
