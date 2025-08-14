@@ -60,7 +60,7 @@ const InnerSolanaProvider: React.FC<
     setVisible(true);
   };
 
-  const getBalance = async () => {
+  /* const getBalance = async () => {
     if (!publicKey) {
       setMessage("No wallet connected");
       return 0;
@@ -81,6 +81,61 @@ const InnerSolanaProvider: React.FC<
       return 0;
     }
   };
+  */
+
+  const getBalance = async (): Promise<number> => {
+  if (!publicKey) {
+    setMessage("No wallet connected");
+    return 0;
+  }
+
+  const maxRetries = 3;
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
+      const address = publicKey.toBase58() as Address;
+      
+      // Add a small delay between retries
+      if (retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+      }
+
+      const balance = await rpc.getBalance(address).send();
+
+      if (balance.value === undefined || balance.value === null) {
+        setMessage(`Balance not found for address: ${address}`);
+        return 0;
+      }
+
+      setMessage(null); // Clear any previous error messages
+      return Number(balance.value) / 1_000_000_000; // Convert lamports to SOL
+
+    } catch (error) {
+      retries++;
+      const errorMessage = (error as Error).message;
+      
+      console.error(`Balance fetch attempt ${retries} failed:`, error);
+      
+      if (retries >= maxRetries) {
+        // Check for specific error types
+        if (errorMessage.includes('8100002') || errorMessage.includes('403')) {
+          setMessage("RPC endpoint rate limit reached. Please try again later or use a different endpoint.");
+        } else if (errorMessage.includes('timeout')) {
+          setMessage("Request timeout. Please check your internet connection.");
+        } else {
+          setMessage(`Error fetching balance after ${maxRetries} attempts: ${errorMessage}`);
+        }
+        return 0;
+      }
+      
+      // Continue to next retry
+      setMessage(`Retrying balance fetch (${retries}/${maxRetries})...`);
+    }
+  }
+
+  return 0;
+};
 
   return (
     <SolanaContext.Provider
@@ -99,7 +154,7 @@ const InnerSolanaProvider: React.FC<
 };
 
 export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
-  const endpoint = "https://api.mainnet-beta.solana.com";
+  const endpoint = "https://solana-api.projectserum.com";
   const rpc = createSolanaRpc(mainnet(endpoint));
   const rpcSubscriptions = createSolanaRpcSubscriptions(
     endpoint.replace("https", "wss")
