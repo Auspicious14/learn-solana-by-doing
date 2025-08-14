@@ -75,32 +75,45 @@ const InnerSolanaProvider: React.FC<
       setMessage("No wallet connected");
       return 0;
     }
+   let retries = 0
+   let maxRetries = 3
+    while ( retries < maxRetries ) {
+      try {
+        
 
-    try {
-      const balance = await rpc.getBalance(publicKey);
-      console.log({ balance });
-         if (!balance) {
+        if (retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+        }
+        
+        const balance = await rpc.getBalance(publicKey);
+        console.log({ balance });
+        if (!balance) {
           setMessage(`Balance not found`);
           return 0;
-       }
+        }
 
-      return Number(balance) / LAMPORTS_PER_SOL;
-    } catch (error) {
-      console.log({ error });
-      const errorMessage = (error as Error).message;
+        return Number(balance) / LAMPORTS_PER_SOL;
+             
+       } catch (error) {
+        retries++
+        console.log({ error });
+        const errorMessage = (error as Error).message;
 
-      if (errorMessage.includes("8100002") || errorMessage.includes("403")) {
-        setMessage(
-          "RPC endpoint rate limit reached. Please try again later or use a different endpoint."
-        );
-      } else if (errorMessage.includes("timeout")) {
-        setMessage("Request timeout. Please check your internet connection.");
-      } else {
-        setMessage(`Error fetching balance: ${errorMessage}`);
-      }
-      return 0;
+        if (retries >= maxRetries) {
+          if (errorMessage.includes('8100002') || errorMessage.includes('403')) {
+          setMessage("RPC endpoint rate limit reached. Please try again later or use a different endpoint.");
+        } else if (errorMessage.includes('timeout')) {
+          setMessage("Request timeout. Please check your internet connection.");
+        } else {
+          setMessage(`Error fetching balance after ${maxRetries} attempts: ${errorMessage}. Try again in 5 mins`);
+        }
+        return 0;
+      }  
+      setMessage(`Retrying balance fetch (${retries}/${maxRetries})...`);
     }
-  };
+  }
+  return 0
+};
 
   return (
     <SolanaContext.Provider
@@ -118,7 +131,8 @@ const InnerSolanaProvider: React.FC<
 };
 
 export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
-  const endpoint = clusterApiUrl("devnet");
+  const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || "devnet"
+  const endpoint = clusterApiUrl(network);
   const connection = new Connection(endpoint, "confirmed");
   const wallets = useMemo(
     () => [
