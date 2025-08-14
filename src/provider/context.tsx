@@ -79,10 +79,10 @@ const InnerSolanaProvider: React.FC<
     try {
       const balance = await rpc.getBalance(publicKey);
       console.log({ balance });
-      //   if (!balance) {
-      //     // setMessage(`Balance not found`);
-      //     return 0;
-      //   }
+         if (!balance) {
+          setMessage(`Balance not found`);
+          return 0;
+       }
 
       return Number(balance) / LAMPORTS_PER_SOL;
     } catch (error) {
@@ -118,7 +118,7 @@ const InnerSolanaProvider: React.FC<
 };
 
 export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
-  const endpoint = clusterApiUrl("mainnet-beta");
+  const endpoint = clusterApiUrl("devnet");
   const connection = new Connection(endpoint, "confirmed");
   const wallets = useMemo(
     () => [
