@@ -32,6 +32,7 @@ import {
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
+  Cluster
 } from "@solana/web3.js";
 import { createContext, useContext, useMemo, useState } from "react";
 
@@ -132,7 +133,7 @@ const InnerSolanaProvider: React.FC<
 
 export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
   const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || "devnet"
-  const endpoint = clusterApiUrl(network);
+  const endpoint = clusterApiUrl(network as Cluster);
   const connection = new Connection(endpoint, "confirmed");
   const wallets = useMemo(
     () => [
