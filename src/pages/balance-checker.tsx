@@ -65,24 +65,9 @@ export default function BalanceChecker() {
         <div className="mt-6">
           <div className="py-3 px-4 bg-red-900/50 border border-red-700 text-red-200 text-center rounded-lg text-sm break-words overflow-hidden">
             {message}
-            {message.includes("403") && (
-              <p className="mt-2 text-xs">
-                Try{" "}
-                <a
-                  href="https://www.quicknode.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline"
-                >
-                  QuickNode
-                </a>{" "}
-                or another RPC provider for better reliability.
-              </p>
-            )}
           </div>
         </div>
       )}
-    </div>
     </div>
   );
 }
