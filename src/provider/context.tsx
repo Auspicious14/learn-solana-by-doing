@@ -1,13 +1,5 @@
-import {
-  createSolanaRpc,
-  createSolanaRpcSubscriptions,
-  mainnet,
-  Rpc,
-  RpcSubscriptions,
-  SolanaRpcApiMainnet,
-  SolanaRpcSubscriptionsApi,
-  Address,
-} from "@solana/kit";
+import apiClient from "@/lib/api";
+
 import {
   ConnectionProvider,
   WalletProvider,
@@ -27,18 +19,11 @@ import {
   KeystoneWalletAdapter,
   TrustWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
-import {
-  clusterApiUrl,
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  Cluster
-} from "@solana/web3.js";
 import { createContext, useContext, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 interface ISolanaState {
-  rpc: Connection;
-  publicKey: PublicKey | null;
+  publicKey: string | null;
   message: string | null;
   connectWallet: () => void;
   getBalance: () => Promise<number>;
@@ -58,11 +43,7 @@ interface IProps {
   children: React.ReactNode;
 }
 
-const InnerSolanaProvider: React.FC<
-  IProps & {
-    rpc: Connection;
-  }
-> = ({ children, rpc }) => {
+const InnerSolanaProvider: React.FC<IProps & {}> = ({ children }) => {
   const { publicKey } = useWallet();
   const { setVisible } = useWalletModal();
   const [message, setMessage] = useState<string | null>(null);
@@ -72,55 +53,65 @@ const InnerSolanaProvider: React.FC<
   };
 
   const getBalance = async () => {
+    const endpoint = process.env.NEXT_PUBLIC_API_URL as string;
     if (!publicKey) {
       setMessage("No wallet connected");
       return 0;
     }
-   let retries = 0
-   let maxRetries = 3
-    while ( retries < maxRetries ) {
+    let retries = 0;
+    let maxRetries = 3;
+    while (retries < maxRetries) {
       try {
-        
-
         if (retries > 0) {
-        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
-        }
-        
-        const balance = await rpc.getBalance(publicKey);
-        console.log({ balance });
-        if (!balance) {
-          setMessage(`Balance not found`);
-          return 0;
+          await new Promise((resolve) => setTimeout(resolve, 1000 * retries));
         }
 
-        return Number(balance) / LAMPORTS_PER_SOL;
-             
-       } catch (error) {
-        retries++
+        const response = await apiClient.post(`${endpoint}/get-balance`, {
+          publicKey,
+        });
+        const result = response.data;
+        if (result?.success) {
+          const balance = result?.data;
+          if (!balance) {
+            setMessage(`Balance not found`);
+            toast(`Balance not found`);
+            return 0;
+          }
+        }
+      } catch (error) {
+        retries++;
         console.log({ error });
         const errorMessage = (error as Error).message;
 
         if (retries >= maxRetries) {
-          if (errorMessage.includes('8100002') || errorMessage.includes('403')) {
-          setMessage("RPC endpoint rate limit reached. Please try again later or use a different endpoint.");
-        } else if (errorMessage.includes('timeout')) {
-          setMessage("Request timeout. Please check your internet connection.");
-        } else {
-          setMessage(`Error fetching balance after ${maxRetries} attempts: ${errorMessage}. Try again in 5 mins`);
+          if (
+            errorMessage.includes("8100002") ||
+            errorMessage.includes("403")
+          ) {
+            setMessage(
+              "RPC endpoint rate limit reached. Please try again later or use a different endpoint."
+            );
+          } else if (errorMessage.includes("timeout")) {
+            setMessage(
+              "Request timeout. Please check your internet connection."
+            );
+          } else {
+            setMessage(
+              `Error fetching balance after ${maxRetries} attempts: ${errorMessage}. Try again in 5 mins`
+            );
+          }
+          return 0;
         }
-        return 0;
-      }  
-      setMessage(`Retrying balance fetch (${retries}/${maxRetries})...`);
+        setMessage(`Retrying balance fetch (${retries}/${maxRetries})...`);
+      }
     }
-  }
-  return 0
-};
+    return 0;
+  };
 
   return (
     <SolanaContext.Provider
       value={{
-        rpc,
-        publicKey,
+        publicKey: publicKey as any,
         message,
         connectWallet,
         getBalance,
@@ -132,9 +123,8 @@ const InnerSolanaProvider: React.FC<
 };
 
 export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
-  const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || "devnet"
-  const endpoint = clusterApiUrl(network as Cluster);
-  const connection = new Connection(endpoint, "confirmed");
+  const endpoint = process.env.NEXT_PUBLIC_API_URL;
+
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
@@ -150,10 +140,10 @@ export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={endpoint as string}>
       <WalletProvider wallets={wallets} autoConnect={false}>
         <WalletModalProvider>
-          <InnerSolanaProvider rpc={connection}>{children}</InnerSolanaProvider>
+          <InnerSolanaProvider>{children}</InnerSolanaProvider>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
