@@ -23,7 +23,7 @@ import { createContext, useContext, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 interface ISolanaState {
-  publicKey: string | null;
+  publicKey: any;
   message: string | null;
   connectWallet: () => void;
   getBalance: () => Promise<number>;
@@ -67,7 +67,7 @@ const InnerSolanaProvider: React.FC<IProps & {}> = ({ children }) => {
         }
 
         const response = await apiClient.post(`${endpoint}/get-balance`, {
-          publicKey,
+          publicKey: publicKey.toBase58(),
         });
         const result = response.data;
         if (result?.success) {
