@@ -140,7 +140,7 @@ export const SolanaContextProvider: React.FC<IProps> = ({ children }) => {
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint as string}>
+    <ConnectionProvider endpoint={`${endpoint as string}/proxy`}>
       <WalletProvider wallets={wallets} autoConnect={false}>
         <WalletModalProvider>
           <InnerSolanaProvider>{children}</InnerSolanaProvider>
