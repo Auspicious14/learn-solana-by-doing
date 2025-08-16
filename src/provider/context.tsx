@@ -58,14 +58,9 @@ const InnerSolanaProvider: React.FC<IProps & {}> = ({ children }) => {
       setMessage("No wallet connected");
       return 0;
     }
-    let retries = 0;
-    let maxRetries = 3;
-    while (retries < maxRetries) {
+    
       try {
-        if (retries > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 1000 * retries));
-        }
-
+        
         const response = await apiClient.post(`${endpoint}/get-balance`, {
           publicKey: publicKey.toBase58(),
         });
@@ -79,32 +74,30 @@ const InnerSolanaProvider: React.FC<IProps & {}> = ({ children }) => {
           }
         }
       } catch (error) {
-        retries++;
         console.log({ error });
         const errorMessage = (error as Error).message;
 
-        if (retries >= maxRetries) {
           if (
             errorMessage.includes("8100002") ||
             errorMessage.includes("403")
           ) {
             setMessage(
-              "RPC endpoint rate limit reached. Please try again later or use a different endpoint."
+              "RPC endpoint rate limit reached. Please try again later."
             );
+            toast.error("RPC endpoint rate limit reached. Please try again later.")
           } else if (errorMessage.includes("timeout")) {
             setMessage(
               "Request timeout. Please check your internet connection."
             );
+            toast.error("Request timeout. Please check your internet connection.")
           } else {
             setMessage(
-              `Error fetching balance after ${maxRetries} attempts: ${errorMessage}. Try again in 5 mins`
+              `Error fetching balance: ${errorMessage}. Try again`
             );
+            toast.error(`Error fetching balance: ${errorMessage}. Try again later.`)
           }
           return 0;
         }
-        setMessage(`Retrying balance fetch (${retries}/${maxRetries})...`);
-      }
-    }
     return 0;
   };
 
