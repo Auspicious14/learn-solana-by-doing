@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { useSolanaState } from "@/provider/context";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -13,7 +14,7 @@ export default function BalanceChecker() {
       const balanceInSol = await getBalance();
       setBalance(balanceInSol);
     } catch (err) {
-      console.error("Error getting balance:", err);
+      console.log("Error getting balance:", err);
     } finally {
       setLoading(false);
     }
@@ -61,13 +62,13 @@ export default function BalanceChecker() {
         </div>
       )}
 
-      {message && (
+      {/* {message && (
         <div className="mt-6">
           <div className="py-3 px-4 bg-red-900/50 border border-red-700 text-red-200 text-center rounded-lg text-sm break-words overflow-hidden">
             {message}
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

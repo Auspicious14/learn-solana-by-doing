@@ -58,46 +58,38 @@ const InnerSolanaProvider: React.FC<IProps & {}> = ({ children }) => {
       setMessage("No wallet connected");
       return 0;
     }
-    
-      try {
-        
-        const response = await apiClient.post(`${endpoint}/get-balance`, {
-          publicKey: publicKey.toBase58(),
-        });
-        const result = response.data;
-        if (result?.success) {
-          const balance = result?.data;
-          if (!balance) {
-            setMessage(`Balance not found`);
-            toast(`Balance not found`);
-            return 0;
-          }
-        }
-      } catch (error) {
-        console.log({ error });
-        const errorMessage = (error as Error).message;
 
-          if (
-            errorMessage.includes("8100002") ||
-            errorMessage.includes("403")
-          ) {
-            setMessage(
-              "RPC endpoint rate limit reached. Please try again later."
-            );
-            toast.error("RPC endpoint rate limit reached. Please try again later.")
-          } else if (errorMessage.includes("timeout")) {
-            setMessage(
-              "Request timeout. Please check your internet connection."
-            );
-            toast.error("Request timeout. Please check your internet connection.")
-          } else {
-            setMessage(
-              `Error fetching balance: ${errorMessage}. Try again`
-            );
-            toast.error(`Error fetching balance: ${errorMessage}. Try again later.`)
-          }
+    try {
+      const response: any = await apiClient.post(`${endpoint}/get-balance`, {
+        publicKey: publicKey.toBase58(),
+      });
+      if (response?.success) {
+        const balance = response?.data;
+        if (!balance) {
+          setMessage(`Balance not found`);
+          toast(`Balance not found`);
           return 0;
         }
+        return balance;
+      }
+    } catch (error) {
+      console.log({ error });
+      const errorMessage = (error as Error).message;
+
+      if (errorMessage.includes("8100002") || errorMessage.includes("403")) {
+        setMessage("RPC endpoint rate limit reached. Please try again later.");
+        toast.error("RPC endpoint rate limit reached. Please try again later.");
+      } else if (errorMessage.includes("timeout")) {
+        setMessage("Request timeout. Please check your internet connection.");
+        toast.error("Request timeout. Please check your internet connection.");
+      } else {
+        setMessage(`Error fetching balance: ${errorMessage}. Try again`);
+        toast.error(
+          `Error fetching balance: ${errorMessage}. Try again later.`
+        );
+      }
+      return 0;
+    }
     return 0;
   };
 

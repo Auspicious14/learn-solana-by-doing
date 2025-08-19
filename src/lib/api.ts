@@ -1,83 +1,86 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import toast from 'react-hot-toast'
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import toast from "react-hot-toast";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 class ApiClient {
-  private instance: AxiosInstance
+  private instance: AxiosInstance;
 
   constructor() {
     this.instance = axios.create({
       baseURL: API_BASE_URL,
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-    })
+    });
 
-    this.setupInterceptors()
+    this.setupInterceptors();
   }
 
   private setupInterceptors() {
     // Request interceptor
     this.instance.interceptors.request.use(
       (config) => {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("auth_token")
+            : null;
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`
+          config.headers.Authorization = `Bearer ${token}`;
         }
-        return config
+        return config;
       },
       (error) => {
-        return Promise.reject(error)
+        return Promise.reject(error);
       }
-    )
+    );
 
     // Response interceptor
     this.instance.interceptors.response.use(
       (response) => {
-        return response.data
+        return response.data;
       },
       (error) => {
-        const message = error.response?.data?.message || 'An error occurred'
-        
+        const message = error.response?.data?.message || "An error occurred";
+
         if (error.response?.status === 401) {
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('auth_token')
-            window.location.href = '/login'
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("auth_token");
+            window.location.href = "/login";
           }
         }
-        
+
         if (error.response?.status >= 400) {
-          toast.error(message)
+          toast.error(message);
         }
-        
-        return Promise.reject(error)
+
+        return Promise.reject(error);
       }
-    )
+    );
   }
 
   // Generic request methods
   get(url: string, config?: AxiosRequestConfig) {
-    return this.instance.get(url, config)
+    return this.instance.get(url, config);
   }
 
   post(url: string, data?: any, config?: AxiosRequestConfig) {
-    return this.instance.post(url, data, config)
+    return this.instance.post(url, data, config);
   }
 
   put(url: string, data?: any, config?: AxiosRequestConfig) {
-    return this.instance.put(url, data, config)
+    return this.instance.put(url, data, config);
   }
 
   delete(url: string, config?: AxiosRequestConfig) {
-    return this.instance.delete(url, config)
+    return this.instance.delete(url, config);
   }
 
   patch(url: string, data?: any, config?: AxiosRequestConfig) {
-    return this.instance.patch(url, data, config)
+    return this.instance.patch(url, data, config);
   }
 }
 
-export const apiClient = new ApiClient()
-export default apiClient
+export const apiClient = new ApiClient();
+export default apiClient;
