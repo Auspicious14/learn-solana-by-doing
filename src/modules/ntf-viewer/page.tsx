@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useNFTState } from "./context"
 import { NFTCard } from "./components/card"
+import { NFTListItem } from "./components/list"
 
 export const NFTPortfolioViewer = () => {
   const { ntfs, loading, fetchNFTs } = useNFTState()
@@ -45,68 +46,9 @@ export const NFTPortfolioViewer = () => {
   };
 
   
-  const NFTListItem = ({ nft }: { nft: NFT }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0">
-          {nft.image ? (
-            <img 
-              src={nft.image} 
-              alt={nft.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" fill="%23f3f4f6"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy="0.3em" font-family="Arial, sans-serif" font-size="10" fill="%236b7280"%3ENo Image%3C/text%3E%3C/svg%3E';
-              }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <Sparkles className="w-6 h-6" />
-            </div>
-          )}
-        </div>
-        <div className="flex-grow min-w-0">
-          <h3 className="font-semibold text-gray-900 dark:text-white truncate">
-            {nft.name || 'Unnamed NFT'}
-          </h3>
-          {nft.collection && (
-            <p className="text-sm text-purple-600 dark:text-purple-400 truncate">
-              {nft.collection}
-            </p>
-          )}
-          <div className="flex items-center gap-4 mt-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {nft.attributes.length} traits
-            </span>
-            {nft.creators.length > 0 && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                {nft.creators[0].address.slice(0, 8)}...
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-            <Eye className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-          </button>
-          {nft.uri && (
-            <a 
-              href={nft.uri} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              <ExternalLink className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-            </a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between mb-6">
@@ -133,7 +75,6 @@ export const NFTPortfolioViewer = () => {
             </div>
           </div>
 
-          {/* Wallet Input */}
           <div className="flex gap-3 mb-6">
             <div className="flex-grow relative">
               <Wallet className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -163,17 +104,8 @@ export const NFTPortfolioViewer = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+  
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-            <p className="text-red-800 dark:text-red-200">{error}</p>
-          </div>
-        )}
-
-        {/* Filters and Controls */}
         {nfts.length > 0 && (
           <div className="mb-6 flex flex-wrap items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-2">
@@ -243,7 +175,6 @@ export const NFTPortfolioViewer = () => {
           </div>
         )}
 
-        {/* NFT Grid/List */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
@@ -265,7 +196,7 @@ export const NFTPortfolioViewer = () => {
               ))}
             </div>
           )
-        ) : nfts.length === 0 && !loading && !error ? (
+        ) : nfts.length === 0 && !loading ? (
           <div className="text-center py-20">
             <Wallet className="w-16 h-16 text-gray-400 mx-auto mb-6" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
