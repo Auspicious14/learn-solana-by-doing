@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet } from 'lucide-react';
+import { Wallet, RefreshCw } from 'lucide-react';
 import { useNFTState } from "./context";
 import { NFTCard } from "./components/card";
 import { NFTListItem } from "./components/list";
@@ -11,7 +11,7 @@ import { NFTFilters } from './components/filters';
 import { EmptyState } from './components/empty';
 
 export const NFTPortfolioViewer: React.FC = () => {
-  const { nfts, loading, fetchNFTs, clearError } = useNFTState();
+  const { nfts, loading, fetchNFTs } = useNFTState();
   const { publicKey, connected } = useWalletState();
   
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -125,7 +125,12 @@ export const NFTPortfolioViewer: React.FC = () => {
             onMintNFT={handleMintNFT}
           />
         ) : loading ? (
-          <LoadingState />
+          <div className="flex items-center justify-center py-12 sm:py-20">
+      <div className="text-center">
+        <RefreshCw className="w-8 h-8 text-purple-600 animate-spin mx-auto mb-4" />
+        <p className="text-gray-600 dark:text-gray-400">Loading your NFTs...</p>
+      </div>
+    </div>
         ) : filteredNFTs.length > 0 ? (
           viewMode === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
