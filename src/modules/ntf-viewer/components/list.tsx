@@ -1,4 +1,4 @@
-import { INFT} from "./model"
+import { INFT} from "../model"
 import { ExternalLink, Eye, Sparkles } from "lucide-react"
 import Link from "next/link"
 
