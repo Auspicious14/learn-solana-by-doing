@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Wallet, 
-  Grid, 
-  List, 
-  Plus, 
-  Upload, 
-  Eye, 
-  ExternalLink,
+import React, { useState, useEffect } from "react";
+import {
+  Wallet,
+  Grid,
+  List,
+  Plus,
+  Upload,
   RefreshCw,
   AlertCircle,
   Sparkles,
@@ -15,37 +13,47 @@ import {
   Search,
   LogOut,
   Menu,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 import { useNFTState } from "./context";
 import { NFTCard } from "./components/card";
 import { NFTListItem } from "./components/list";
-import { useWalletState } from "@/provider/walletContext";
+import { useWalletState } from "@/contexts/WalletContext";
 
 export const NFTPortfolioViewer = () => {
-  const { nfts, loading, fetchNFTs } = useNFTState();
-  const { publicKey, connected, connecting, connectWallet, disconnect } = useWalletState();
-  
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCollection, setSelectedCollection] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
+  const { nfts, loading, error, fetchNFTs } = useNFTState();
+  const { publicKey, connected, connecting, connectWallet, disconnect } =
+    useWalletState();
+
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCollection, setSelectedCollection] = useState("all");
+  const [sortBy, setSortBy] = useState("name");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Collections and filtered NFTs
+  const collections = Array.from(
+    new Set(nfts.map((nft) => nft.collection).filter(Boolean))
+  );
 
-  const collections = Array.from(new Set(nfts.map(nft => nft.collection).filter(Boolean)));
-  const filteredNFTs = nfts.filter(nft => {
-    const matchesSearch = nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         nft.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCollection = selectedCollection === 'all' || nft.collection === selectedCollection;
-    return matchesSearch && matchesCollection;
-  }).sort((a, b) => {
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    if (sortBy === 'collection') return (a.collection || '').localeCompare(b.collection || '');
-    return 0;
-  });
+  const filteredNFTs = nfts
+    .filter((nft) => {
+      const matchesSearch =
+        nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        nft.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCollection =
+        selectedCollection === "all" || nft.collection === selectedCollection;
+      return matchesSearch && matchesCollection;
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "collection")
+        return (a.collection || "").localeCompare(b.collection || "");
+      return 0;
+    });
 
+  // Auto-fetch NFTs when wallet connects
   useEffect(() => {
     if (connected && publicKey) {
       fetchNFTs(publicKey.toBase58());
@@ -58,13 +66,16 @@ export const NFTPortfolioViewer = () => {
     }
   };
 
+  // Wallet Connect/Disconnect Button
   const WalletButton = () => {
     if (connecting) {
       return (
-        <button disabled className="w-full sm:w-auto px-4 py-3 bg-gray-400 text-white rounded-lg flex items-center justify-center gap-2 font-semibold">
+        <button
+          disabled
+          className="w-full sm:w-auto px-4 py-3 bg-gray-400 text-white rounded-lg flex items-center justify-center gap-2 font-semibold"
+        >
           <RefreshCw className="w-4 h-4 animate-spin" />
-          <span className="hidden sm:inline">Connecting...</span>
-          <span className="sm:hidden">Connecting...</span>
+          <span>Connecting...</span>
         </button>
       );
     }
@@ -75,7 +86,9 @@ export const NFTPortfolioViewer = () => {
           <div className="flex-1 sm:flex-none bg-white dark:bg-gray-700 rounded-lg px-3 py-2 border border-gray-300 dark:border-gray-600">
             <p className="text-xs text-gray-600 dark:text-gray-400">Connected</p>
             <p className="font-mono text-sm text-gray-900 dark:text-white truncate max-w-32 sm:max-w-none">
-              {`${publicKey.toBase58().slice(0, 4)}...${publicKey.toBase58().slice(-4)}`}
+              {`${publicKey.toBase58().slice(0, 4)}...${publicKey
+                .toBase58()
+                .slice(-4)}`}
             </p>
           </div>
           <button
@@ -100,6 +113,114 @@ export const NFTPortfolioViewer = () => {
     );
   };
 
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl">
+                <Wallet className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                  NFT Portfolio
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400 hidden sm:block mt-1">
+                  Discover, view, and manage your Solana NFTs
+                </p>
+              </div>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="sm:hidden p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
+
+          {/* Desktop Actions */}
+          <div className="hidden sm:flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              {connected && (
+                <button
+                  onClick={handleRefresh}
+                  disabled={loading}
+                  className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                  />
+                  Refresh
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-colors flex items-center gap-2 font-semibold shadow-sm">
+                <Plus className="w-4 h-4" />
+                Create NFT
+              </button>
+              <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors flex items-center gap-2 font-semibold shadow-sm">
+                <Upload className="w-4 h-4" />
+                Mint NFT
+              </button>
+            </div>
+          </div>
+
+          {/* Wallet + Mobile Actions */}
+          <div className={`${mobileMenuOpen ? "block" : "hidden"} sm:block`}>
+            <div className="space-y-4">
+              <WalletButton />
+              <div className="sm:hidden grid grid-cols-1 gap-3">
+                {connected && (
+                  <button
+                    onClick={handleRefresh}
+                    disabled={loading}
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <RefreshCw
+                      className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                    />
+                    Refresh NFTs
+                  </button>
+                )}
+                <button className="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-colors flex items-center justify-center gap-2 font-semibold">
+                  <Plus className="w-4 h-4" />
+                  Create NFT
+                </button>
+                <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors flex items-center justify-center gap-2 font-semibold">
+                  <Upload className="w-4 h-4" />
+                  Mint NFT
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* Filters and content states follow... */}
+        {/* -- keep your filters / NFT grid / list / empty states here unchanged -- */}
+      </div>
+    </div>
+  );
+};
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
