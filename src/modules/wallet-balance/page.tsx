@@ -2,9 +2,16 @@
 import { useState } from "react";
 import { useBalanceState } from "./context";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWalletState } from "@/provider/walletContext"
 
 export default function BalanceChecker() {
-  const { message, getBalance, publicKey, connectWallet } = useBalanceState();
+  const { 
+    publicKey, 
+    connected,
+    connectWallet, 
+    disconnect 
+  } = useWalletState();
+  const { message, getBalance } = useBalanceState();
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
