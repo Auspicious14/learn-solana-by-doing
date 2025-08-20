@@ -4,7 +4,7 @@ import { useBalanceState } from "./context";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWalletState } from "@/provider/walletContext"
 
-export const BalanceChecker = () => {
+export const BalanceCheckerPage = () => {
   const { 
     publicKey, 
     connected,
