@@ -5,6 +5,8 @@ import apiClient from "@/lib/api";
 
 
 interface INFTState {
+  loading: boolean
+  nfts: INFT[]
   fetchNFTs: (publicKey: string) => Promise<void>
 }
 
@@ -64,8 +66,7 @@ export const NFTContextProvider: React.FC<IProps> = ({children}) => {
     <NFTContext.Provider value={{
       loading,
       nfts,
-      fetchNFTs,
-      
+      fetchNFTs, 
     }}>
       {children}
     </NFTContext.Provider>
