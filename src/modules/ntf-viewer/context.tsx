@@ -28,7 +28,7 @@ export const NFTContextProvider: React.FC<IProps> = ({children}) => {
     const endpoint = process.env.NEXT_PUBLIC_API_URL as string;
     
     if (!walletAddress.trim()) {
-      toast error('Please enter a wallet address');
+      toast.error('Please enter a wallet address');
       return;
     }
 
