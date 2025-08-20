@@ -11,7 +11,7 @@ import { NFTFilters } from './components/filters';
 import { EmptyState } from './components/empty';
 
 export const NFTPortfolioViewer: React.FC = () => {
-  const { nfts, loading, error, fetchNFTs, clearError } = useNFTState();
+  const { nfts, loading, fetchNFTs, clearError } = useNFTState();
   const { publicKey, connected } = useWalletState();
   
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
