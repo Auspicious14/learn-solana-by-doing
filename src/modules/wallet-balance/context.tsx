@@ -14,7 +14,7 @@ interface IBalanceState {
 
 const BalanceContext = createContext<IBalanceState | undefined>(undefined);
 
-export const useBalance = () => {
+export const useBalanceState = () => {
   const context = useContext(BalanceContext);
   if (!context) {
     throw new Error("useBalance must be used within BalanceProvider");
