@@ -1,4 +1,4 @@
-import { INFT } from "./model"
+import { INFT } from "../model"
 import { Eye, ExternalLink, Sparkles } from "lucide-react"
 
 export const NFTCard = ({ nft }: { nft: INFT }) => {
