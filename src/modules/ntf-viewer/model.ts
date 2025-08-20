@@ -1,4 +1,4 @@
-interface INFT {
+export interface INFT {
   id: string;
   name: string;
   symbol?: string;
