@@ -19,7 +19,7 @@ import { NFTCard } from "./components/card"
 import { NFTListItem } from "./components/list"
 
 export const NFTPortfolioViewer = () => {
-  const { ntfs, loading, fetchNFTs } = useNFTState()
+  const { nfts, loading, fetchNFTs } = useNFTState()
   const [walletAddress, setWalletAddress] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState('');
