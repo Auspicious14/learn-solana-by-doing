@@ -18,7 +18,7 @@ import {
 import { useNFTState } from "./context";
 import { NFTCard } from "./components/card";
 import { NFTListItem } from "./components/list";
-import { useWalletState } from "@/contexts/WalletContext";
+import { useWalletState } from "@/provider/walletContext";
 
 export const NFTPortfolioViewer = () => {
   const { nfts, loading, error, fetchNFTs } = useNFTState();
