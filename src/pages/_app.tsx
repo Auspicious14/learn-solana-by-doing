@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { SolanaContextProvider } from "@/provider/context";
+import { AppProvider } from "@/provider/index";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SolanaContextProvider>
+    <AppProvider>
       <Component {...pageProps} />
       <Toaster
         position="top-right"
@@ -31,6 +31,6 @@ export default function App({ Component, pageProps }: AppProps) {
           },
         }}
       />
-    </SolanaContextProvider>
+    </AppProvider>
   );
 }
