@@ -47,7 +47,7 @@ export const NFTContextProvider: React.FC<IProps> = ({children}) => {
           toast.error('No NFTs found in this wallet');
         }
       } else {
-        setError(data.message || 'Failed to fetch NFTs');
+        toast.error(data.message || 'Failed to fetch NFTs');
       }
     } catch (err: any) {
       console.error('Error fetching NFTs:', err);
