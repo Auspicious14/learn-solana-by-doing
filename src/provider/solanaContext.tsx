@@ -14,6 +14,7 @@ import {
   KeystoneWalletAdapter,
   TrustWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
+import '@solana/wallet-adapter-react-ui/styles.css';
 
 interface ISolanaProviderProps {
   children: React.ReactNode;
