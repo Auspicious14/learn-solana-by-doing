@@ -28,6 +28,12 @@ export default function Home() {
             >
               Wallet Balance Checker
             </Link>
+            <Link
+              href="/nft-viewer"
+              className="block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 text-center"
+            >
+              NFT Portfolio Viewer
+            </Link>
           
           </div>
         </div>
@@ -36,7 +42,7 @@ export default function Home() {
           <p className="text-gray-400 text-sm">
             Want to connect? Find me on{" "}
             <Link
-              href="https://x.com/@_auspy"
+              href="https://x.com/@_auspy_"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400 hover:underline"
@@ -44,14 +50,14 @@ export default function Home() {
               X
             </Link>{" "}
             or check out my{" "}
-            <a
+            <Link
               href="https://github.com/Auspicious14"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400 hover:underline"
             >
               GitHub
-            </a>
+            </Link>
             .
           </p>
         </div>
