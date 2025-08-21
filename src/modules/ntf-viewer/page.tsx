@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from "react";
 import { Wallet, RefreshCw } from "lucide-react";
 import { useNFTState } from "./context";
