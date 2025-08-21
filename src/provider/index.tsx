@@ -2,7 +2,7 @@ import React from "react";
 import { SolanaProvider } from "./solanaContext";
 import { WalletContextProvider } from "./walletContext";
 import { BalanceProvider } from "@/modules/wallet-balance/context";
-import { NFTContextProvider } from "@/modules/nft-viewer/context";
+import { NFTContextProvider } from "@/modules/ntf-viewer/context";
 
 interface IAppProviderProps {
   children: React.ReactNode;
