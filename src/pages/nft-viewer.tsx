@@ -1,7 +1,5 @@
-import { NFTPortfolioViewer } from "@/modules/nft-viewer/page"
+import { NFTPortfolioViewerPage } from "@/modules/ntf-viewer/page";
 
 export default function NFTPortfolioViewer() {
-  return (
-    <NFTPortfolioViewer/>
-  )
+  return <NFTPortfolioViewerPage />;
 }
