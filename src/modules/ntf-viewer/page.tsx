@@ -1,5 +1,4 @@
-
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { Wallet, RefreshCw } from "lucide-react";
 import { useNFTState } from "./context";
@@ -18,6 +17,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedCollection, setSelectedCollection] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,8 +30,10 @@ export const NFTPortfolioViewerPage: React.FC = () => {
   const filteredNFTs = nfts
     .filter((nft) => {
       const matchesSearch =
-        nft.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        nft.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        nft.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        nft.description
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase());
       const matchesCollection =
         selectedCollection === "all" || nft.collection === selectedCollection;
       return matchesSearch && matchesCollection;
@@ -48,13 +50,16 @@ export const NFTPortfolioViewerPage: React.FC = () => {
     if (connected && publicKey) {
       fetchNFTs(publicKey.toBase58());
     }
-  }, [connected, publicKey, fetchNFTs]);
+  }, [connected, publicKey?.toBase58(), fetchNFTs]);
 
-  const handleRefresh = () => {
-    if (connected && publicKey) {
-      fetchNFTs(publicKey.toBase58());
-    }
-  };
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [searchTerm]);
 
   const handleCreateNFT = () => {
     console.log("Create NFT clicked");
@@ -65,7 +70,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
     console.log("Mint NFT clicked");
     // Add your mint NFT logic here
   };
-
+  console.log({ nfts });
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Enhanced Header */}
@@ -91,7 +96,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
               isOpen={mobileMenuOpen}
               onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
               connected={connected}
-              onRefresh={handleRefresh}
+              onRefresh={() => fetchNFTs(publicKey!.toBase58())}
               loading={loading}
             />
           </div>
@@ -99,16 +104,25 @@ export const NFTPortfolioViewerPage: React.FC = () => {
           {/* Desktop Action Buttons */}
           <ActionButtons
             connected={connected}
-            onRefresh={handleRefresh}
+            onRefresh={() => fetchNFTs(publicKey!.toBase58())}
             loading={loading}
             onCreateNFT={handleCreateNFT}
             onMintNFT={handleMintNFT}
           />
 
           {/* Wallet Connection - Enhanced */}
-          <div className={`${mobileMenuOpen ? "block" : "hidden"} sm:block transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'animate-in slide-in-from-top-2' : ''}`}>
+          <div
+            className={`${
+              mobileMenuOpen ? "block" : "hidden"
+            } sm:block transition-all duration-300 ease-in-out ${
+              mobileMenuOpen ? "animate-in slide-in-from-top-2" : ""
+            }`}
+          >
             <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200/50 dark:border-gray-600/50">
-              <WalletConnection onRefresh={handleRefresh} loading={loading} />
+              <WalletConnection
+                onRefresh={() => fetchNFTs(publicKey!.toBase58())}
+                loading={loading}
+              />
             </div>
           </div>
         </div>
@@ -162,7 +176,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
             {viewMode === "grid" ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                 {filteredNFTs.map((nft, index) => (
-                  <div 
+                  <div
                     key={nft.id}
                     className="animate-in fade-in-0 slide-in-from-bottom-4 duration-500"
                     style={{ animationDelay: `${index * 50}ms` }}
@@ -174,7 +188,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
             ) : (
               <div className="space-y-3 sm:space-y-4">
                 {filteredNFTs.map((nft, index) => (
-                  <div 
+                  <div
                     key={nft.id}
                     className="animate-in fade-in-0 slide-in-from-left-4 duration-500"
                     style={{ animationDelay: `${index * 30}ms` }}
@@ -204,11 +218,11 @@ export const NFTPortfolioViewerPage: React.FC = () => {
       {connected && (
         <div className="fixed bottom-6 right-6 sm:hidden z-40">
           <button
-            onClick={handleRefresh}
+            onClick={() => fetchNFTs(publicKey!.toBase58())}
             disabled={loading}
             className="w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center disabled:opacity-50 hover:scale-110"
           >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       )}
