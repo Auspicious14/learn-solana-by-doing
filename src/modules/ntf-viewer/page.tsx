@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Wallet, RefreshCw } from "lucide-react";
+import { Wallet, RefreshCw, Menu, X } from "lucide-react";
 import { useNFTState } from "./context";
 import { NFTCard } from "./components/card";
 import { NFTListItem } from "./components/list";
@@ -23,7 +23,6 @@ export const NFTPortfolioViewerPage: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Derived state
   const collections = Array.from(
     new Set(nfts.map((nft) => nft.collection).filter(Boolean))
   );
@@ -45,7 +44,6 @@ export const NFTPortfolioViewerPage: React.FC = () => {
       return 0;
     });
 
-  // Auto-fetch NFTs when wallet connects
   useEffect(() => {
     if (connected && publicKey) {
       fetchNFTs(publicKey.toBase58());
@@ -70,13 +68,10 @@ export const NFTPortfolioViewerPage: React.FC = () => {
     console.log("Mint NFT clicked");
     // Add your mint NFT logic here
   };
-  console.log({ nfts });
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Enhanced Header */}
       <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          {/* Header Title */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 rounded-2xl shadow-lg">
@@ -91,17 +86,18 @@ export const NFTPortfolioViewerPage: React.FC = () => {
                 </p>
               </div>
             </div>
-
-            <MobileMenu
-              isOpen={mobileMenuOpen}
-              onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-              connected={connected}
-              onRefresh={() => fetchNFTs(publicKey!.toBase58())}
-              loading={loading}
-            />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="sm:hidden p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
           </div>
 
-          {/* Desktop Action Buttons */}
           <ActionButtons
             connected={connected}
             onRefresh={() => fetchNFTs(publicKey!.toBase58())}
@@ -110,7 +106,6 @@ export const NFTPortfolioViewerPage: React.FC = () => {
             onMintNFT={handleMintNFT}
           />
 
-          {/* Wallet Connection - Enhanced */}
           <div
             className={`${
               mobileMenuOpen ? "block" : "hidden"
@@ -123,14 +118,13 @@ export const NFTPortfolioViewerPage: React.FC = () => {
                 onRefresh={() => fetchNFTs(publicKey!.toBase58())}
                 loading={loading}
               />
+              <MobileMenu isOpen={mobileMenuOpen} loading={loading} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content - Enhanced */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Filters */}
         {connected && nfts.length > 0 && (
           <NFTFilters
             searchTerm={searchTerm}
@@ -149,7 +143,6 @@ export const NFTPortfolioViewerPage: React.FC = () => {
           />
         )}
 
-        {/* Content States */}
         {!connected ? (
           <EmptyState
             type="not-connected"
@@ -214,8 +207,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
         )}
       </div>
 
-      {/* Floating Action Button for Mobile (Optional Enhancement) */}
-      {connected && (
+      {/* {connected && (
         <div className="fixed bottom-6 right-6 sm:hidden z-40">
           <button
             onClick={() => fetchNFTs(publicKey!.toBase58())}
@@ -225,7 +217,7 @@ export const NFTPortfolioViewerPage: React.FC = () => {
             <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
